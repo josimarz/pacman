@@ -36,6 +36,7 @@ public:
   Frame(sf::Vector2u position, ContentKind content_kind);
   ~Frame();
   ContentKind GetContentKind();
+  void SetContentKind(ContentKind content_kind);
   sf::Vector2u GetPosition();
   bool IsAccessible() const;
   void Render(sf::RenderWindow &render_window);

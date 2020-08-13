@@ -9,6 +9,10 @@ Frame::~Frame() {}
 
 ContentKind Frame::GetContentKind() { return content_kind_; }
 
+void Frame::SetContentKind(ContentKind content_kind) {
+  content_kind_ = content_kind;
+}
+
 sf::Vector2u Frame::GetPosition() { return position_; }
 
 bool Frame::IsAccessible() const {

@@ -25,6 +25,7 @@ const unsigned char kSpriteWidth = 16;
 const unsigned char kSpriteHeight = 16;
 const sf::Vector2f kPacmanScale(4, 4);
 const unsigned char kPacmanPadding = kFrameSize - 16 * 4;
+const sf::Vector2u kStartPosition(10, 15);
 
 const sf::IntRect kSpriteRects[5][4] = {
     {
@@ -66,14 +67,15 @@ private:
   Direction direction_;
   MouthPosition mouth_position_;
   sf::Vector2u position_;
-  unsigned char speed_;
   unsigned char lives_;
   unsigned int score_;
   bool game_over_;
+  bool energized_;
   sf::IntRect GetSpriteRect();
   sf::Vector2f GetFramePosition();
   bool CanMoveTo(sf::Vector2u position);
   void Move();
+  void Eat(Frame *frame);
 
 public:
   Pacman();

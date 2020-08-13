@@ -1,8 +1,10 @@
 #include "Pacman.hpp"
 
-Pacman::Pacman() : position_(10, 15) {
+Pacman::Pacman() : position_(kStartPosition) {
+  score_ = 0;
   direction_ = Direction::None;
   mouth_position_ = MouthPosition::Open;
+  energized_ = false;
   texture_.loadFromFile("assets/sprites/pacman.png");
   sprite_.setTexture(texture_);
   sprite_.setTextureRect(GetSpriteRect());
@@ -21,11 +23,23 @@ sf::Vector2f Pacman::GetFramePosition() {
                       position_.y * kFrameSize + kPacmanPadding);
 }
 
+void Pacman::Eat(Frame *frame) {
+  if (frame->GetContentKind() == ContentKind::Dot) {
+    score_++;
+    frame->SetContentKind(ContentKind::None);
+  }
+  if (frame->GetContentKind() == ContentKind::Energizer) {
+    energized_ = true;
+    frame->SetContentKind(ContentKind::None);
+  }
+}
+
 bool Pacman::CanMoveTo(sf::Vector2u position) {
-  auto frame = std::find(kFrames.begin(), kFrames.end(), position);
-  if (frame == kFrames.end()) {
+  auto frame = World::FindFrame(position);
+  if (!frame) {
     return false;
   }
+  Eat(&*frame);
   return frame->IsAccessible();
 }
 
