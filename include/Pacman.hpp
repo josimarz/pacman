@@ -13,14 +13,23 @@ enum class Direction {
   Right,
 };
 
-enum class MouthPosition {
+enum class MouthState {
   Closed,
   HalfClosed,
   HalfOpen,
   Open,
 };
 
-const unsigned char kPacmanSpeed = 5;
+const MouthState kMouthSequence[16] = {
+    MouthState::Open,       MouthState::Open,       MouthState::Open,
+    MouthState::Open,       MouthState::HalfClosed, MouthState::HalfClosed,
+    MouthState::HalfClosed, MouthState::HalfClosed, MouthState::Closed,
+    MouthState::Closed,     MouthState::Closed,     MouthState::Closed,
+    MouthState::HalfOpen,   MouthState::HalfOpen,   MouthState::HalfOpen,
+    MouthState::HalfOpen,
+};
+
+const unsigned char kPacmanSpeed = 80;
 const unsigned char kSpriteWidth = 16;
 const unsigned char kSpriteHeight = 16;
 const sf::Vector2f kPacmanScale(4, 4);
@@ -64,18 +73,19 @@ class Pacman {
 private:
   sf::Texture texture_;
   sf::Sprite sprite_;
-  Direction direction_;
-  MouthPosition mouth_position_;
-  sf::Vector2u position_;
+  Direction current_direction_;
+  Direction next_direction_;
+  unsigned char mouth_index_;
+  sf::Vector2u current_position_;
   unsigned char lives_;
   unsigned int score_;
   bool game_over_;
   bool energized_;
   sf::IntRect GetSpriteRect();
-  sf::Vector2f GetFramePosition();
+  sf::Vector2f GetFramePosition(sf::Vector2u position);
   bool CanMoveTo(sf::Vector2u position);
   void Move();
-  void Eat(Frame *frame);
+  void Eat();
 
 public:
   Pacman();
