@@ -24,7 +24,7 @@ void Game::HandleInput() {
 
 void Game::Update() {
   window_.Update();
-  float timestep = 1.0f / kPacmanSpeed;
+  float timestep = 1.0f / pacman_.GetSpeed();
   if (elapsed_ > timestep) {
     pacman_.Tick();
     world_.Update();

@@ -1,20 +1,24 @@
 #ifndef World_hpp
 #define World_hpp
 
-#include "Frame.hpp"
+#include "Tiles.hpp"
 #include "Window.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
 
+using TileSet = std::vector<tile::Tile *>;
+
 class World {
+private:
+  static TileSet tiles_;
+
 public:
-  static Frame frames_[441];
   World();
   ~World();
   void Update();
   void Render(sf::RenderWindow &render_window);
-  static Frame *FindFrame(sf::Vector2u position);
+  static tile::Tile *FindTile(const sf::Vector2u position);
 };
 
 #endif

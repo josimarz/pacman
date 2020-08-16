@@ -20,57 +20,13 @@ enum class MouthState {
   Open,
 };
 
-const MouthState kMouthSequence[16] = {
-    MouthState::Open,       MouthState::Open,       MouthState::Open,
-    MouthState::Open,       MouthState::HalfClosed, MouthState::HalfClosed,
-    MouthState::HalfClosed, MouthState::HalfClosed, MouthState::Closed,
-    MouthState::Closed,     MouthState::Closed,     MouthState::Closed,
-    MouthState::HalfOpen,   MouthState::HalfOpen,   MouthState::HalfOpen,
-    MouthState::HalfOpen,
-};
-
-const unsigned char kPacmanSpeed = 80;
-const unsigned char kSpriteWidth = 16;
-const unsigned char kSpriteHeight = 16;
-const sf::Vector2f kPacmanScale(4, 4);
-const unsigned char kPacmanPadding = kFrameSize - 16 * 4;
-const sf::Vector2u kStartPosition(10, 15);
-
-const sf::IntRect kSpriteRects[5][4] = {
-    {
-        sf::IntRect(32, 32, kSpriteWidth, kSpriteHeight),
-        sf::IntRect(16, 32, kSpriteWidth, kSpriteHeight),
-        sf::IntRect(16, 32, kSpriteWidth, kSpriteHeight),
-        sf::IntRect(0, 32, kSpriteWidth, kSpriteHeight),
-    },
-    {
-        sf::IntRect(32, 32, kSpriteWidth, kSpriteHeight),
-        sf::IntRect(16, 32, kSpriteWidth, kSpriteHeight),
-        sf::IntRect(16, 32, kSpriteWidth, kSpriteHeight),
-        sf::IntRect(0, 32, kSpriteWidth, kSpriteHeight),
-    },
-    {
-        sf::IntRect(32, 48, kSpriteWidth, kSpriteHeight),
-        sf::IntRect(16, 48, kSpriteWidth, kSpriteHeight),
-        sf::IntRect(16, 48, kSpriteWidth, kSpriteHeight),
-        sf::IntRect(0, 48, kSpriteWidth, kSpriteHeight),
-    },
-    {
-        sf::IntRect(32, 16, kSpriteWidth, kSpriteHeight),
-        sf::IntRect(16, 16, kSpriteWidth, kSpriteHeight),
-        sf::IntRect(16, 16, kSpriteWidth, kSpriteHeight),
-        sf::IntRect(0, 16, kSpriteWidth, kSpriteHeight),
-    },
-    {
-        sf::IntRect(32, 0, kSpriteWidth, kSpriteHeight),
-        sf::IntRect(16, 0, kSpriteWidth, kSpriteHeight),
-        sf::IntRect(16, 0, kSpriteWidth, kSpriteHeight),
-        sf::IntRect(0, 0, kSpriteWidth, kSpriteHeight),
-    },
-};
-
 class Pacman {
 private:
+  static MouthState mouth_sequence_[16];
+  static sf::IntRect sprite_rect_[5][4];
+  static sf::Vector2f sprite_scale_;
+  static sf::Vector2u start_position_;
+  static unsigned char padding_;
   sf::Texture texture_;
   sf::Sprite sprite_;
   Direction current_direction_;
@@ -78,6 +34,7 @@ private:
   unsigned char mouth_index_;
   sf::Vector2u current_position_;
   unsigned char lives_;
+  unsigned char speed_;
   unsigned int score_;
   bool game_over_;
   bool energized_;
@@ -85,11 +42,11 @@ private:
   sf::Vector2f GetFramePosition(sf::Vector2u position);
   bool CanMoveTo(sf::Vector2u position);
   void Move();
-  void Eat();
 
 public:
   Pacman();
   ~Pacman();
+  unsigned char GetSpeed();
   void Render(sf::RenderWindow &render_window);
   void Tick();
   void SetDirection(Direction direction);

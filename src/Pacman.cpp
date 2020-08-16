@@ -1,49 +1,86 @@
 #include "Pacman.hpp"
 
-Pacman::Pacman() : current_position_(kStartPosition) {
-  score_ = 0;
+MouthState Pacman::mouth_sequence_[16] = {
+    MouthState::Open,       MouthState::Open,       MouthState::Open,
+    MouthState::Open,       MouthState::HalfClosed, MouthState::HalfClosed,
+    MouthState::HalfClosed, MouthState::HalfClosed, MouthState::Closed,
+    MouthState::Closed,     MouthState::Closed,     MouthState::Closed,
+    MouthState::HalfOpen,   MouthState::HalfOpen,   MouthState::HalfOpen,
+    MouthState::HalfOpen,
+};
+
+sf::IntRect Pacman::sprite_rect_[5][4] = {
+    {
+        sf::IntRect(32, 32, 16, 16),
+        sf::IntRect(16, 32, 16, 16),
+        sf::IntRect(16, 32, 16, 16),
+        sf::IntRect(0, 32, 16, 16),
+    },
+    {
+        sf::IntRect(32, 32, 16, 16),
+        sf::IntRect(16, 32, 16, 16),
+        sf::IntRect(16, 32, 16, 16),
+        sf::IntRect(0, 32, 16, 16),
+    },
+    {
+        sf::IntRect(32, 48, 16, 16),
+        sf::IntRect(16, 48, 16, 16),
+        sf::IntRect(16, 48, 16, 16),
+        sf::IntRect(0, 48, 16, 16),
+    },
+    {
+        sf::IntRect(32, 16, 16, 16),
+        sf::IntRect(16, 16, 16, 16),
+        sf::IntRect(16, 16, 16, 16),
+        sf::IntRect(0, 16, 16, 16),
+    },
+    {
+        sf::IntRect(32, 0, 16, 16),
+        sf::IntRect(16, 0, 16, 16),
+        sf::IntRect(16, 0, 16, 16),
+        sf::IntRect(0, 0, 16, 16),
+    },
+};
+
+sf::Vector2f Pacman::sprite_scale_ = sf::Vector2f(4, 4);
+
+sf::Vector2u Pacman::start_position_ = sf::Vector2u(10, 15);
+
+unsigned char Pacman::padding_ = tile::kTileSize - 16 * 4;
+
+Pacman::Pacman() : current_position_(Pacman::start_position_) {
   current_direction_ = Direction::None;
   next_direction_ = Direction::None;
   mouth_index_ = 0;
+  speed_ = 80;
+  lives_ = 3;
+  score_ = 0;
   energized_ = false;
   texture_.loadFromFile("assets/sprites/pacman.png");
   sprite_.setTexture(texture_);
   sprite_.setTextureRect(GetSpriteRect());
-  sprite_.setScale(kPacmanScale);
+  sprite_.setScale(Pacman::sprite_scale_);
   sprite_.setPosition(GetFramePosition(current_position_));
 }
 
 Pacman::~Pacman() {}
 
 sf::IntRect Pacman::GetSpriteRect() {
-  return kSpriteRects[(unsigned char)current_direction_]
-                     [(unsigned char)kMouthSequence[mouth_index_]];
+  return Pacman::sprite_rect_[(unsigned char)current_direction_][(
+      unsigned char)Pacman::mouth_sequence_[mouth_index_]];
 }
 
 sf::Vector2f Pacman::GetFramePosition(sf::Vector2u position) {
-  return sf::Vector2f(position.x * kFrameSize + kPacmanPadding,
-                      position.y * kFrameSize + kPacmanPadding);
-}
-
-void Pacman::Eat() {
-  auto frame = World::FindFrame(current_position_);
-  if (frame->GetContentKind() == ContentKind::Dot) {
-    score_++;
-    frame->SetContentKind(ContentKind::None);
-  }
-  if (frame->GetContentKind() == ContentKind::Energizer) {
-    energized_ = true;
-    frame->SetContentKind(ContentKind::None);
-  }
+  return sf::Vector2f(position.x * tile::kTileSize + Pacman::padding_,
+                      position.y * tile::kTileSize + Pacman::padding_);
 }
 
 bool Pacman::CanMoveTo(sf::Vector2u position) {
-  auto frame = World::FindFrame(position);
-  if (!frame) {
-    return false;
-  }
-  return frame->IsAccessible();
+  auto tile = World::FindTile(position);
+  return tile ? tile->IsAccessible() : false;
 }
+
+unsigned char Pacman::GetSpeed() { return speed_; }
 
 void Pacman::Render(sf::RenderWindow &render_window) {
   sprite_.setTextureRect(GetSpriteRect());
@@ -82,7 +119,6 @@ void Pacman::Move() {
   if (move == sf::Vector2f(target)) {
     current_position_ = position;
     current_direction_ = next_direction_;
-    Eat();
   }
 }
 

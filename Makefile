@@ -1,6 +1,6 @@
 CXX			:= g++
 CXX_FLAGS	:= -std=c++17 -ggdb
-LDFLAGS		:= -framework Security
+LDFLAGS		:=
 
 BIN		:= bin
 SRC		:= src
